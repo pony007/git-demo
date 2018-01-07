@@ -1,0 +1,143 @@
+
+pwd 显示当前的目录，cd到一个自己想成为git库的文件夹
+git init 当前的文件夹就成为了git库
+
+git status  查看git当中的内容
+
+git add 文件名  git add . 就是添加所有的文件
+
+git commit，-m后面输入的是本次提交的说明，可以输入任意内容
+
+git log 查看以前所有的更改记录  git log --oneline 简略的显示
+
+如果想要查看这次还没 add (unstaged)的修改部分和上个已经 commit 的文件有何不同
+我们将使用 
+git diff
+
+如果你已经 add 了这次修改, 文件变成了 “可提交状态” (staged),
+我们可以在 diff 中添加参数 --cached 来查看修改:
+git diff --cached
+
+还有种方法让我们可以查看 add 过 (staged) 和 没 add (unstaged) 的修改
+git diff HEAD
+
+
+git add 1.py
+git commit -m "change 1"
+
+在管理库中已经有的文件可以省略的写成
+git commit -am "change 1"
+
+
+
+在commit中穿梭
+
+
+比如已经提交了commit却发现在这个commit中忘了附上另一个文件，
+将要添加另外一个文件, 将这个修改也 commit 进 change 2.
+例如：
+我又添加了一个文件 git add 2.py     git commit -m "change3"
+但是我不想重新添加这个备注，我想把这个备注添加到上一次修改中，
+就可以使用下面的命令
+
+git commit --amend --no-edit  #"--no-deit"不编辑，直接合并到上一个commit
+
+
+有时我们添加 add 了修改, 但是又后悔, 并想补充一些内容再 add
+git reset 1.py
+这样就回到之前没有add的状态
+
+
+不管我们之前有没有做了一些 add 工作, 这一步让我们回到 上一次的 commit
+git reset --hard HEAD
+或者根据git log --oneline 的id号 ，回到想回到的版本号
+git reset --hard 19c0306
+当我们回到版本1的时候，这个时候就看不到版本2的id号了，这时突然又想回到版本2
+就用这个命令 git reflog 可以查看最近所有的改变，想回到那个时候就
+git reset --hard 对应得id号
+
+
+
+
+
+针对单个的文件
+
+其实 checkout 最主要的用途并不是让单个文件回到过去,
+我们仅仅要对 1.py 进行回到过去操作, 回到 19c0306 change 1 这一个 commit. 
+使用 checkout + id 19c0306 + -- + 文件目录 1.py, 
+我们就能将 1.py 的指针 HEAD 放在这个时刻 19c0306:
+git checkout 19c0306 -- 1.py
+此时文件1.py的内容就变了
+
+
+
+
+分支
+
+
+之前的文件当中, 仅仅只有一条master分支, 我们可以通过 --graph 来观看分支
+git log --oneline --graph
+
+创建一个分支 git branch dev(分支名)
+查看所有的分支 git branch 
+改变一个分支为主分支 git checkout dev
+删除一个分支 git branch -d dev
+创建一个分支并使这个分支为主分支 git checkout -b dev
+
+dev 分支中的 1.py 和 2.py 和 master 中的文件是一模一样的.
+ 因为当前的指针 HEAD 在 dev 分支上, 
+所以现在对文件夹中的文件进行修改将不会影响到 master 分支.
+
+
+好了, 我们的开发板 dev 已经更新好了, 我们要将 dev 中的修改推送到 master 中, 
+大家就能使用到正式版中的新功能了.首先我们要切换到 master, 再将 dev 推送过来.
+git merge --no-ff -m "keep merge info" dev
+要注意的是, 如果直接 git merge dev, 
+git 会采用默认的 Fast forward 格式进行 merge,
+ 这样 merge 的这次操作不会有 commit 信息. log 中也不会有分支的图案.
+ 我们可以采取 --no-ff 这种方式保留 merge 的 commit 信息.
+
+
+
+
+分支冲突
+
+master 中的 1.py 加上 # edited in master.
+dev 中的 1.py 加上 # edited in dev
+此时我们想要推送的话
+git merge dev
+git 发现的我们的 1.py 在 master 和 dev 上的版本是不同的, 所以提示 merge 有冲突. 具体的冲突,
+git 已经帮我们标记出来, 我们打开 1.py 就能看到:
+
+
+分支冲突2
+
+
+
+
+临时修改
+
+将这些改变暂时放一边
+git status
+这个时候我们做一些其它的操作
+git status pop  这个时候就回复操作了
+
+
+git
+建立连接
+git remote add origin https://github.com/pony007/git-demo.git
+
+修改后记得推送
+
+推送分支
+git push -u origin master
+
+
+
+
+
+
+
+
+
+
